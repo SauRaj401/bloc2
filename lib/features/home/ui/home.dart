@@ -1,4 +1,5 @@
 import 'package:bloc2/features/home/bloc/home_bloc_bloc.dart';
+import 'package:bloc2/features/home/ui/product_tile_widget.dart';
 import 'package:bloc2/features/wishlist/ui/wishlist.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,18 @@ class _HomeState extends State<Home> {
               MaterialPageRoute(
                 builder: (context) => wishlist(),
               ));
+        } else if (state is HomeProductItemWishlistedActionState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            "Item added in wishlist",
+            style: TextStyle(color: Colors.white),
+          )));
+        } else if (state is HomeProductItemCartActionState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            "Intem addes in the cart bag",
+            style: TextStyle(color: Colors.white),
+          )));
         }
       },
       builder: (context, state) {
@@ -53,6 +66,7 @@ class _HomeState extends State<Home> {
               ),
             );
           case HomeLoadedSuccessState:
+            final successState = state as HomeLoadedSuccessState;
             return Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.teal,
@@ -69,6 +83,14 @@ class _HomeState extends State<Home> {
                       },
                       child: Icon(Icons.shopping_bag_outlined))
                 ],
+              ),
+              body: ListView.builder(
+                itemCount: successState.products.length,
+                itemBuilder: (context, index) {
+                  return ProductTileWidget(
+                      homeBlocBloc: homeBlocBloc,
+                      productModel: successState.products[index]);
+                },
               ),
             );
           case HomeErrorState:
